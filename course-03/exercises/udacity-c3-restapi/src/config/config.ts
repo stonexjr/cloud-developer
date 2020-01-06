@@ -1,3 +1,4 @@
+//define the following secret through your environment variable
 export const config = {
   "dev": {
     "username": process.env.POSTGRESS_USERNAME,
@@ -20,4 +21,4 @@ export const config = {
     "secret": process.env.JWT_SECRET
   }
 
-}
+};
