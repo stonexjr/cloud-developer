@@ -1,3 +1,10 @@
+# Before running kubectl apply -f <this.yaml> file, make sure you have created configmap env-config and secret env-secret
+# Suppose you have a text file with each line contains key=value pair of the environment variable you would like to define
+# for the launched container. It is imperative since the backend service needs predefined environment variable to access the hostname,
+# database name of the RDS, and the secrets for DB usename and password
+# $>kubectl create configmap -f path/to/a/file/with/<key=value> pairs
+# $>kubectl create secret generic --from-literal=POSTGRESS_USERNAME=yourposegress_username --from-literal=POSTGRESS_PASSWORD
+# $>kubectl apply -f this.yaml
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
@@ -12,9 +19,9 @@ spec:
         service: backend-user
     spec:
       containers:
-      - image: scheele/udacity-restapi-user
-        name: backend-user 
-        imagePullPolicy: Always  
+      - image: stonexjr/udacity-restapi-user
+        name: backend-user
+        imagePullPolicy: Always
         resources:
           requests:
             memory: "64Mi"
@@ -23,11 +30,6 @@ spec:
             memory: "1024Mi"
             cpu: "500m"      
         env:
-        - name: URL
-          valueFrom:
-            configMapKeyRef:
-              name: env-config
-              key: URL 
         - name: JWT_SECRET
           valueFrom:
             configMapKeyRef:
