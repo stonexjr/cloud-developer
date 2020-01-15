@@ -20,6 +20,9 @@ before_install:
 install:
   - echo "building docker images..."
   - docker-compose -f course-03/exercises/udacity-c3-deployment/docker/docker-compose-build.yaml build --parallel
-
-
-
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+  - docker images
+  - docker push $DOCKER_USERNAME/udacity-restapi-user
+  - docker push $DOCKER_USERNAME/udacity-restapi-feed
+  - docker push $DOCKER_USERNAME/udacity-frontend:local
+  - docker push $DOCKER_USERNAME/reverseproxy
