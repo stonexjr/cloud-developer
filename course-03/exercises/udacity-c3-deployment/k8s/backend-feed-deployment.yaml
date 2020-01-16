@@ -30,6 +30,11 @@ spec:
             memory: "1024Mi"
             cpu: "500m"                  
         env:
+        - name: URL
+          valueFrom:
+            configMapKeyRef:
+              name: env-config
+              key: URL
         - name: AWS_BUCKET
           valueFrom:
             configMapKeyRef:
@@ -70,12 +75,12 @@ spec:
             secretKeyRef:
               name: env-secret
               key: POSTGRESS_USERNAME      
-#        volumeMounts:
-#        - name: aws-secret
-#          mountPath: "/root/.aws/"
-#          readOnly: true
-#      restartPolicy: Always
-#      volumes:
-#      - name: aws-secret
-#        secret:
-#          secretName: aws-secret
+        volumeMounts:
+        - name: aws-secret
+          mountPath: "/root/.aws/"
+          readOnly: true
+      restartPolicy: Always
+      volumes:
+      - name: aws-secret
+        secret:
+          secretName: aws-secret

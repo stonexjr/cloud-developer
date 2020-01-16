@@ -30,6 +30,11 @@ spec:
             memory: "1024Mi"
             cpu: "500m"      
         env:
+        - name: URL
+          valueFrom:
+            configMapKeyRef:
+              name: env-config
+              key: URL
         - name: JWT_SECRET
           valueFrom:
             configMapKeyRef:
