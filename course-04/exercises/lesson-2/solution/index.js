@@ -2,7 +2,8 @@
 
 const AWS = require('aws-sdk')
 
-const docClient = new AWS.DynamoDB.DocumentClient()
+//const docClient = new AWS.DynamoDB.DocumentClient() //for aws-sdk version < 2.365
+const docClient = new AWS.DynamoDB(); //new API
 
 const groupsTable = process.env.GROUPS_TABLE
 
