@@ -9,4 +9,5 @@ RUN npm ci
 # Bundle app source
 COPY . .
 EXPOSE 8080
+RUN apt-get update && apt-get install -y vim tree postgresql-client
 CMD [ "npm", "run", "prod" ]
