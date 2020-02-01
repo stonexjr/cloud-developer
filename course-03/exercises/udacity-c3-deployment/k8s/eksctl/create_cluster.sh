@@ -1,6 +1,6 @@
 #!/bin/bash
 eksctl create cluster \
---name udagram-k8s-cluster \
+--name udagram-c3-k8s \
 --version 1.14 \
 --region us-west-2 \
 --nodegroup-name standard-workers \

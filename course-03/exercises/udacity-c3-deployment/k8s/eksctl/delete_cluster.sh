@@ -1,3 +1,3 @@
 #!/bin/bash
 eksctl delete cluster \
---name udagram-k8s-cluster
+--name udagram-c3-k8s

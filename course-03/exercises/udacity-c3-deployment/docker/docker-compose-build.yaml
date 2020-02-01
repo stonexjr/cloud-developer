@@ -14,5 +14,5 @@ services:
     image: stonexjr/udacity-restapi-feed
   frontend:
     build:
-      context: ../../udacity-c3-frontend  
+      context: ../../udacity-c3-frontend
     image: stonexjr/udacity-frontend:local
