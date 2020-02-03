@@ -4,9 +4,14 @@ import { APIGatewayProxyEvent, APIGatewayProxyHandler, APIGatewayProxyResult } f
 import { CreateTodoRequest } from '../../requests/CreateTodoRequest'
 import * as AWS from 'aws-sdk'
 import uuid from 'uuid';
+import {getUploadUrl} from "./generateUploadUrl";
 
 const docClient = new AWS.DynamoDB.DocumentClient();
 const TODOTable = process.env.TODOS_TABLE;
+const s3 = new AWS.S3({
+  signatureVersion: 'v4'
+});
+const bucketName    = process.env.IMAGES_S3_BUCKET;
 
 export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
   const newTodo: CreateTodoRequest = JSON.parse(event.body);
@@ -19,7 +24,7 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
     ...newTodo,
     createdAt: timestamp.toISOString(),
     done: false,
-    attachmentUrl: "http://example.com/image.png",
+    attachmentUrl: `https://${bucketName}.s3.amazonaws.com/${todoId}`, //client use this url to display image
     userId: userId
   };
   await docClient.put({
@@ -27,13 +32,17 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
     Item: newItem
   }).promise();
 
+  // get image upload url to S3
+  const url = getUploadUrl(todoId);
+
   return {
     statusCode: 201,
     headers:{
         'Access-Control-Allow-Origin': '*'
     },
     body: JSON.stringify({
-      item: newItem
+      item: newItem,
+      uploadUrl: url
     })
   };
 };
