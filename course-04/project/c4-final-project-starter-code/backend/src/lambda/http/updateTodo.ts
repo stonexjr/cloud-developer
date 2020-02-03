@@ -95,9 +95,7 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
     headers: {
       'Access-Control-Allow-Origin': '*'
     },
-    body: JSON.stringify({
-      newItem
-    })
+    body: ""
   }
 };
 
@@ -118,7 +116,7 @@ async function queryTodoItem(userId: string, todoId: string){
 
   return result;
 }
-//TODO: FIXME. Error: The provided key element does not match the schema
+
 async function todoIdExists(userId, todoId){
   const result = await docClient.get({
     TableName: TODOTable,
