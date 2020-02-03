@@ -19,7 +19,7 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
     ...newTodo,
     createdAt: timestamp.toISOString(),
     done: false,
-    attachmentUrl: null,
+    attachmentUrl: "http://example.com/image.png",
     userId: userId
   };
   await docClient.put({
@@ -33,7 +33,7 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
         'Access-Control-Allow-Origin': '*'
     },
     body: JSON.stringify({
-      newItem
+      item: newItem
     })
   };
 };
