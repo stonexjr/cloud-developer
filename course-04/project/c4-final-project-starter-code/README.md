@@ -269,3 +269,37 @@ Right click on the imported collection to set variables for the collection:
 Provide variables for the collection (similarly to how this was done in the course):
 
 ![Alt text](images/import-collection-5.png?raw=true "Image 5")
+
+# Serverless Cheetsheet
+Install serverless
+```bash
+npm install -g serverless
+```
+Configure serverless to use the AWS credentials you just set up:   
+```bash
+sls config credentials --provider aws --key YOUR_ACCESS_KEY \
+ --secret YOUR_SECRET_KEY --profile serverless
+```
+To get a list of the available serverless templates run:
+```bash
+sls create --template
+```
+To create a serverless boilerplate project:
+
+```bash
+sls create --template aws-nodejs-typescript --path 10-udagram-app
+```
+To deploy the application:  
+  1. Install the dependencies:
+  ```bash
+    npm install
+  ```
+  2. Deploy the application
+  ```bash
+    sls deploy -v
+  ```
+
+Note: if you get a permissions error when you run `deploy` you may need to specify the user profile
+```bash
+sls deploy -v --aws-profile serverless
+```
