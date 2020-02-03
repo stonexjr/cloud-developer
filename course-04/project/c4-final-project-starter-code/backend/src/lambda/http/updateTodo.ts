@@ -6,7 +6,7 @@ import * as AWS from 'aws-sdk'
 
 const docClient = new AWS.DynamoDB.DocumentClient();
 const TODOTable = process.env.TODOS_TABLE;
-const todoIdIndex = process.env.TODO_ID_INDEX;
+const todoIdIndex = process.env.TODO_INDEX;
 
 export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
   const todoId = event.pathParameters.todoId;
@@ -15,7 +15,7 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
   // TODO: Update a TODO item with the provided id using values in the "updatedTodo" object
   // check if the todoId exist
   let userId = "1"; //TODO: hard code user Id until resolve Auth0
-  /*
+  /* method II to check if pair(userId, todoId) exist
   const validUserId = await todoIdExists(userId, todoId);
   console.log("======= 2 =========");
 
@@ -26,13 +26,12 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
         'Access-Control-Allow-Origin': '*'
       },
       body: JSON.stringify({
-        error: `User Id: ${userId} does not exist`
+        error: `pair(userId: ${userId}, todoId: ${todoId}) does not exist`
       })
     }
   }
   */
-
-  const result = await queryTodoItemByTodoId(todoId);
+  const result = await queryTodoItem(userId, todoId);
   if(result.Count < 1){
     return {
       statusCode: 404,
@@ -68,10 +67,27 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
     userId: userId //TODO: hardcode userId at this moment
   };
   console.log("======= 4 =========");
-  await docClient.put({
+
+  //https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/GettingStarted.NodeJs.03.html
+  await docClient.update({//TODO: why it's not work?
     TableName: TODOTable,
-    Item: newItem
+    Key:{//https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/WorkingWithItems.html#WorkingWithItems.ReadingData
+      userId: userId,
+      todoId: todoId
+    },
+    UpdateExpression: "set #n = :name, dueDate = :dueDate, done = :done, updatedAt = :updatedAt",
+    ExpressionAttributeValues:{
+      ":name": updatedTodo['name'],
+      ":dueDate": updatedTodo['dueDate'],
+      ':done': updatedTodo['done'],
+      ':updatedAt': timestamp.toISOString()
+    },
+    ExpressionAttributeNames:{
+      "#n": "name"  //attribute "name" is a reserved keyword in DynamoDB. See https://intellipaat.com/community/17771/update-attribute-timestamp-reserved-word
+    },
+    ReturnValues: "UPDATED_NEW"
   }).promise();
+
   console.log("======= 5 =========");
 
   return {
@@ -85,27 +101,33 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
   }
 };
 
+async function queryTodoItem(userId: string, todoId: string){
+  const result = await docClient.query({
+    TableName: TODOTable,
+    // IndexName: todoIdIndex,
+    ProjectionExpression: "userId, #n, done, dueDate, attachmentUrl, createdAt",
+    KeyConditionExpression: 'todoId = :todoId and userId = :userId',
+    ExpressionAttributeValues: {
+      ':userId': userId,
+      ':todoId': todoId
+    },
+    ExpressionAttributeNames:{
+      '#n': 'name'
+    }
+  }).promise();
+
+  return result;
+}
+//TODO: FIXME. Error: The provided key element does not match the schema
 async function todoIdExists(userId, todoId){
   const result = await docClient.get({
     TableName: TODOTable,
     Key:{
-      'todoId': todoId, //todoId
-      'userId': userId
+      'userId': userId,
+      'todoId': todoId
     }
   }).promise();
 
   return !!result.Item;
 }
 
-async function queryTodoItemByTodoId(todoId: string){
-  const result = await docClient.query({
-    TableName: TODOTable,
-    IndexName: todoIdIndex,
-    KeyConditionExpression: 'todoId = :todoId',
-    ExpressionAttributeValues: {
-      ':todoId': todoId
-    }
-  }).promise();
-
-  return result;
-}

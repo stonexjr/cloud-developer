@@ -36,25 +36,26 @@ async function getTODOPerUser(userId: string){
     return result.Items
 }
 
-// 'use strict'
-//
-// const AWS = require('aws-sdk');
-// const docClient = new AWS.DynamoDB.DocumentClient();
-// const groupsTable = process.env.TODOS_TABLE;
-//
-// exports.handler = async (event) => {
-//     // TODO: Get all TODO items for a current user
-//     const result = await docClient.scan({
-//         TableName: 'TODOS-dev'
-//     }).promise();
-//     const items = result.Items;
-//     return {
-//         statusCode: 200,
-//         headers: {
-//             'Access-Control-Allow-Origin': '*'
-//         },
-//         body: JSON.stringify({
-//             items
-//         })
-//     }
-// };
+/*
+'use strict';
+const AWS = require('aws-sdk');
+const docClient = new AWS.DynamoDB.DocumentClient();
+const todoTable = process.env.TODOS_TABLE;
+
+exports.handler = async (event) => {
+    // TODO: Get all TODO items for a current user
+    const result = await docClient.scan({
+        TableName: todoTable
+    }).promise();
+    const items = result.Items;
+    return {
+        statusCode: 200,
+        headers: {
+            'Access-Control-Allow-Origin': '*'
+        },
+        body: JSON.stringify({
+            items
+        })
+    }
+};
+*/

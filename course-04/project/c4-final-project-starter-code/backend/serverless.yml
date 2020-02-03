@@ -16,7 +16,7 @@ provider:
   environment:
     AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
     TODOS_TABLE: TODOS-${self:provider.stage}-1
-    TODO_ID_INDEX: todoIdIndex
+    TODO_INDEX: createdAtIndex
 
   iamRoleStatements:
     - Effect: Allow
@@ -24,12 +24,14 @@ provider:
         - dynamodb:Scan
         - dynamodb:PutItem
         - dynamodb:GetItem
+        - dynamodb:UpdateItem
         - dynamodb:Query
-      Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}
+      Resource: arn:aws:dynamodb:${self:provider.region}:*:table/*
+#      Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}
     - Effect: Allow
       Action:
         - dynamodb:Query
-      Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}/index/${self:provider.environment.TODO_ID_INDEX}
+      Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}/index/${self:provider.environment.TODO_INDEX}
 
 custom:
   documentation:
@@ -103,21 +105,21 @@ resources:
         AttributeDefinitions:
           - AttributeName: userId
             AttributeType: S
-          - AttributeName: createdAt
-            AttributeType: S
           - AttributeName: todoId
+            AttributeType: S
+          - AttributeName: createdAt
             AttributeType: S
         KeySchema:
           - AttributeName: userId # partition key
             KeyType: HASH
-          - AttributeName: createdAt # sort key
+          - AttributeName: todoId # sort key
             KeyType: RANGE
         BillingMode: PAY_PER_REQUEST
         TableName: ${self:provider.environment.TODOS_TABLE}
         GlobalSecondaryIndexes:
-          - IndexName: ${self:provider.environment.TODO_ID_INDEX}
+          - IndexName: ${self:provider.environment.TODO_INDEX}
             KeySchema:
-              - AttributeName: todoId
+              - AttributeName: createdAt
                 KeyType: HASH
             Projection:
               ProjectionType: ALL
