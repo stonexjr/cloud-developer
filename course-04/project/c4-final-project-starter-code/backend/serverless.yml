@@ -51,10 +51,12 @@ provider:
         - dynamodb:PutItem
         - dynamodb:DeleteItem
       Resource: arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.CONNECTIONS_TABLE}
-    - Effect: Allow
-      Action:
-        - execute-api:Invoke
-      Resource: arn:aws:execute-api:${opt:region, self:provider.region}:*:*/*
+#    - Effect: Allow
+#      Action:
+#        - execute-api:ManageConnections
+#        - execute-api:Invoke
+#      Resource: "*"
+#      Resource: arn:aws:execute-api:${opt:region, self:provider.region}:*:*/*
 
 custom:
   topicName: serverless-todo-${self:provider.stage}
@@ -132,7 +134,7 @@ functions:
           bucket: ${self:provider.environment.IMAGES_S3_BUCKET}
           event: s3:ObjectCreated:*
           existing: true
-    environments:
+    environment: # it's environment NOT environments. or else you won't be able to access the env variable from within lambda function
       STAGE: ${self:provider.stage}
       API_ID:
         Ref: WebsocketsApi
@@ -232,3 +234,15 @@ resources:
               Action: 's3:GetObject'
               Resource: 'arn:aws:s3:::${self:provider.environment.IMAGES_S3_BUCKET}/*'
         Bucket: !Ref AttachmentsBucket
+
+    # set correct CORS header in case Authorizer fails
+    GatewayResponseDefault4XX:
+      Type: AWS::ApiGateway::GatewayResponse
+      Properties:
+        ResponseParameters:
+          gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+          gatewayresponse.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+          gatewayresponse.header.Access-Control-Allow-Methods: "'GET,OPTIONS,POST'"
+        ResponseType: DEFAULT_4XX
+        RestApiId:
+          Ref: ApiGatewayRestApi

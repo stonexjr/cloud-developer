@@ -6,7 +6,7 @@ const docClient = new AWS.DynamoDB.DocumentClient();
 
 const connectionsTable = process.env.CONNECTIONS_TABLE;
 const stage = process.env.STAGE;
-const apiId = 'kij2b41j6l';//TODO: FIXME: process.env.API_ID returns undefined!!
+const apiId = process.env.API_ID;
 
 const connectionParams = {
     apiVersion: "2018-11-29",
