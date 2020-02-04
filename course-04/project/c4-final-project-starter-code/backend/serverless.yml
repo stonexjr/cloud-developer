@@ -51,12 +51,6 @@ provider:
         - dynamodb:PutItem
         - dynamodb:DeleteItem
       Resource: arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.CONNECTIONS_TABLE}
-#    - Effect: Allow
-#      Action:
-#        - execute-api:ManageConnections
-#        - execute-api:Invoke
-#      Resource: "*"
-#      Resource: arn:aws:execute-api:${opt:region, self:provider.region}:*:*/*
 
 custom:
   topicName: serverless-todo-${self:provider.stage}
@@ -83,6 +77,7 @@ functions:
       - http:
           method: get
           path: todos
+          cors: true
 
   # TODO: Configure this function
   CreateTodo:
@@ -93,6 +88,7 @@ functions:
           path: todos
           cors: true
           reqValidatorName: RequestBodyValidator
+          authorizer: Auth
           documentation:
             summary: Create a new TODO item
             description: Create a new TODO item
@@ -106,6 +102,7 @@ functions:
       - http:
           method: patch
           path: todos/{todoId}
+          cors: true
 
   # TODO: Configure this function
   DeleteTodo:
@@ -114,6 +111,7 @@ functions:
       - http:
           method: delete
           path: todos/{todoId}
+          cors: true
 
   # TODO: Configure this function
   GenerateUploadUrl:
@@ -122,6 +120,7 @@ functions:
       - http:
           method: post
           path: todos/{todoId}/attachment
+          cors: true
 
   # Trigger lambda function by S3 bucket event. The course video mentioned that
   # it was not able to handle existing S3 bucket since the event would first
@@ -219,7 +218,6 @@ resources:
                 - DELETE
                 - HEAD
               MaxAge: 3000
-
 
     BucketPolicy:
       Type: AWS::S3::BucketPolicy
