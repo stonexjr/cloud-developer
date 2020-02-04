@@ -1,31 +1,76 @@
-import { SNSHandler, SNSEvent, S3Event } from 'aws-lambda'
+import {SNSHandler, SNSEvent, S3Event, SNSEventRecord} from 'aws-lambda'
 import 'source-map-support/register'
 import * as AWS  from 'aws-sdk'
 
 const docClient = new AWS.DynamoDB.DocumentClient();
 
-// const connectionsTable = process.env.CONNECTIONS_TABLE;
+const connectionsTable = process.env.CONNECTIONS_TABLE;
 const stage = process.env.STAGE;
-const apiId = process.env.API_ID;
+const apiId = 'kij2b41j6l';//TODO: FIXME: process.env.API_ID returns undefined!!
 
 const connectionParams = {
     apiVersion: "2018-11-29",
     endpoint: `${apiId}.execute-api.us-west-2.amazonaws.com/${stage}`
 };
 
-// const apiGateway = new AWS.ApiGatewayManagementApi(connectionParams);
+const apiGateway = new AWS.ApiGatewayManagementApi(connectionParams);
 
 export const handler: SNSHandler = async (event: SNSEvent) => {
-    // console.log('Processing SNS event ', JSON.stringify(event));
+    console.log('Processing SNS event ', JSON.stringify(event));
     //TODO: finish S3 event handler
     for (const snsRecord of event.Records) {
         // const s3EventStr = snsRecord.Sns.Message;
-        console.log('Processing S3 event with key', snsRecord['s3'].object.key);
+        const s3ObjKey = snsRecord['s3'].object.key;
+        console.log('Processing S3 event with key', s3ObjKey);
         // const s3Event = JSON.parse(s3EventStr);
-        // await processS3Event(s3Event)
+        await processS3Event(snsRecord);
     }
 };
 
+async function processS3Event(record: SNSEventRecord) {
+    // for (const record of s3Event.Records) {
+    const key = record['s3'].object.key;
+    console.log('Processing S3 item with key: ', key);
+
+    const connections = await docClient.scan({
+        TableName: connectionsTable
+    }).promise();
+
+    const payload = {
+        imageId: key
+    };
+
+    for (const connection of connections.Items) {
+        const connectionId = connection.id;
+        await sendMessageToClient(connectionId, payload)
+    }
+    // }
+}
+
+async function sendMessageToClient(connectionId, payload) {
+    try {
+        console.log('Sending message to a connection', connectionId);
+        console.log('Sending message via api endpoint', connectionParams.endpoint);
+
+        await apiGateway.postToConnection({
+            ConnectionId: connectionId,
+            Data: JSON.stringify(payload),
+        }).promise();
+
+    } catch (e) {
+        console.log('Failed to send message', JSON.stringify(e));
+        if (e.statusCode === 410) {
+            console.log('Stale connection');
+
+            await docClient.delete({
+                TableName: connectionsTable,
+                Key: {
+                    id: connectionId
+                }
+            }).promise();
+        }
+    }
+}
 //A sample of SNSEvent instance
 /*
 {
