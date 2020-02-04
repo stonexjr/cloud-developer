@@ -303,3 +303,16 @@ Note: if you get a permissions error when you run `deploy` you may need to speci
 ```bash
 sls deploy -v --aws-profile serverless
 ```
+
+Accessing WebSocket API
+wscat - WebSocket CLI client  
+Install  
+```bash
+npm install wscat -g
+```
+
+Connect  
+```bash
+wscat -c wss://<apiid>.execute-api.us-west-2.amazonaws.com/dev
+```
+

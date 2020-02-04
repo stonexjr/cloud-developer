@@ -17,8 +17,9 @@ provider:
     AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
     TODOS_TABLE: TODOS-${self:provider.stage}-1
     TODO_INDEX: createdAtIndex
-    IMAGES_S3_BUCKET: serverless-todo-image-jinrong-${self:provider.stage}
+    IMAGES_S3_BUCKET: serverless-todo-image-jinrong-${self:provider.stage}-2
     SIGNED_URL_EXPIRATION: 300
+    CONNECTIONS_TABLE: Connection-${self:provider.stage}
 
   iamRoleStatements:
     - Effect: Allow
@@ -35,6 +36,7 @@ provider:
       Action:
         - dynamodb:Query
       Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}/index/${self:provider.environment.TODO_INDEX}
+
       #Allow Lambda function to generate signedURL to put object to S3
     - Effect: Allow
       Action:
@@ -42,7 +44,16 @@ provider:
         - s3:GetObject
       Resource: arn:aws:s3:::${self:provider.environment.IMAGES_S3_BUCKET}/*
 
+      # allow access to connection table that keep track of websocket connection
+    - Effect: Allow
+      Action:
+        - dynamodb:Scan
+        - dynamodb:PutItem
+        - dynamodb:DeleteItem
+      Resource: arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.CONNECTIONS_TABLE}
+
 custom:
+  topicName: serverless-todo-${self:provider.stage}
   documentation:
     api:
       info:
@@ -106,6 +117,18 @@ functions:
           method: post
           path: todos/{todoId}/attachment
 
+  # Trigger lambda function by S3 bucket event. The course video mentioned that
+  # it was not able to handle S3 bucket already existing since the events would first
+  # create a new bucket with the same name as the one created by AttachmentsBucket.
+  # Now the serverless has resolved this issue since version 1.47.0. See: https://serverless.com/framework/docs/providers/aws/events/s3#using-existing-buckets
+  SendUploadNotifications:
+    handler: src/lambda/s3/sendNotifications.handler
+    events:
+      - s3:
+          bucket: ${self:provider.environment.IMAGES_S3_BUCKET}
+          event: s3:ObjectCreated:*
+          existing: true
+
 resources:
   Resources:
     TODOSDynamoDBTable:
@@ -144,13 +167,8 @@ resources:
 
     AttachmentsBucket:
       Type: AWS::S3::Bucket
-#      DependsOn: SNSTopicPolicy
       Properties:
         BucketName: ${self:provider.environment.IMAGES_S3_BUCKET}
-#        NotificationConfiguration:
-#          TopicConfigurations:
-#            - Event: s3:ObjectCreated:Put
-#              Topic: !Ref ImagesTopic
         CorsConfiguration:
           CorsRules:
             -
@@ -165,6 +183,7 @@ resources:
                 - DELETE
                 - HEAD
               MaxAge: 3000
+
 
     BucketPolicy:
       Type: AWS::S3::BucketPolicy
