@@ -10,18 +10,18 @@ const apiId = process.env.API_ID;
 
 const connectionParams = {
     apiVersion: "2018-11-29",
-    endpoint: `${apiId}.execute-api.us-east-1.amazonaws.com/${stage}`
+    endpoint: `${apiId}.execute-api.us-west-2.amazonaws.com/${stage}`
 };
 
 // const apiGateway = new AWS.ApiGatewayManagementApi(connectionParams);
 
 export const handler: SNSHandler = async (event: SNSEvent) => {
-    console.log('Processing SNS event ', JSON.stringify(event));
+    // console.log('Processing SNS event ', JSON.stringify(event));
     //TODO: finish S3 event handler
     for (const snsRecord of event.Records) {
-        const s3EventStr = snsRecord.Sns.Message;
-        console.log('Processing S3 event', s3EventStr);
-        const s3Event = JSON.parse(s3EventStr);
+        // const s3EventStr = snsRecord.Sns.Message;
+        console.log('Processing S3 event with key', snsRecord['s3'].object.key);
+        // const s3Event = JSON.parse(s3EventStr);
         // await processS3Event(s3Event)
     }
 };
