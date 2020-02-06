@@ -1,6 +1,8 @@
 import {SNSHandler, SNSEvent, S3Event, SNSEventRecord} from 'aws-lambda'
 import 'source-map-support/register'
 import * as AWS  from 'aws-sdk'
+import {createLogger} from "../../utils/logger";
+const logger = createLogger('createTodo.ts');
 
 const docClient = new AWS.DynamoDB.DocumentClient();
 
@@ -16,12 +18,11 @@ const connectionParams = {
 const apiGateway = new AWS.ApiGatewayManagementApi(connectionParams);
 
 export const handler: SNSHandler = async (event: SNSEvent) => {
-    console.log('Processing SNS event ', JSON.stringify(event));
+    logger.info('Processing S3 SNS event') //, JSON.stringify(event));
     //TODO: finish S3 event handler
     for (const snsRecord of event.Records) {
         // const s3EventStr = snsRecord.Sns.Message;
         const s3ObjKey = snsRecord['s3'].object.key;
-        console.log('Processing S3 event with key', s3ObjKey);
         // const s3Event = JSON.parse(s3EventStr);
         await processS3Event(snsRecord);
     }
@@ -30,7 +31,7 @@ export const handler: SNSHandler = async (event: SNSEvent) => {
 async function processS3Event(record: SNSEventRecord) {
     // for (const record of s3Event.Records) {
     const key = record['s3'].object.key;
-    console.log('Processing S3 item with key: ', key);
+    logger.info(`Processing S3 event with key ${key}`);
 
     const connections = await docClient.scan({
         TableName: connectionsTable
@@ -95,11 +96,11 @@ async function sendMessageToClient(connectionId, payload) {
             "s3SchemaVersion": "1.0",
             "configurationId": "serverless-todo-app-dev-SendUploadNotifications-68a737133cefb25bff959852b8f04754",
             "bucket": {
-                "name": "serverless-todo-image-jinrong-dev-2",
+                "name": "serverless-todo-image-dev",
                 "ownerIdentity": {
                     "principalId": "A4Z7F3PO6C8P7"
                 },
-                "arn": "arn:aws:s3:::serverless-todo-image-jinrong-dev-2"
+                "arn": "arn:aws:s3:::serverless-todo-image-dev"
             },
             "object": {
                 "key": "f7a2f347-e046-4e65-a7aa-9fbb6cee5d06",
