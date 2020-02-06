@@ -13,18 +13,30 @@ const logger = createLogger('auth');
 // to verify JWT token signature.
 // To get this URL you need to go to an Auth0 page -> Show Advanced Settings -> Endpoints -> JSON Web Key Set
 const jwksUrl = 'https://dev-m8inevff.auth0.com/.well-known/jwks.json';
+let g_cert=null, g_algo=null;
+async function getCert(){
+  if(g_cert || g_algo) {
+    return {
+      cert: g_cert,
+      algo: g_algo
+    };
+  }
+
+  let res = await Axios.get(jwksUrl);
+  g_cert =`-----BEGIN CERTIFICATE-----
+${res.data['keys'][0].x5c[0]}
+-----END CERTIFICATE-----`;
+  g_algo = res.data['keys'][0].alg; //RS256
+  return {
+    cert: g_cert,
+    algo: g_algo
+  };
+}
 
 export const handler = async (
   event: CustomAuthorizerEvent
 ): Promise<CustomAuthorizerResult> => {
-  let res = await Axios.get(jwksUrl);
-  const cert: string =`-----BEGIN CERTIFICATE-----
-${res.data['keys'][0].x5c[0]}
------END CERTIFICATE-----`;
-  const algo: string = res.data['keys'][0].alg; //RS256
-  // logger.info(`algo:${algo}`);
-  // logger.info(`cert:${cert}`);
-  // logger.info('Authorizing a user', event.authorizationToken);
+  let {cert, algo} = await getCert();
   try {
     const jwtToken = verifyToken(event.authorizationToken, cert, algo);
     logger.info(`User ${jwtToken.sub} was authorized with JWT token`);
@@ -61,7 +73,6 @@ ${res.data['keys'][0].x5c[0]}
   }
 };
 
-// async function verifyToken(authHeader: string): Promise<JwtPayload> {
 function verifyToken(authHeader: string, cert: string, algo: string): JwtPayload{
   const token = getToken(authHeader);
   // TODO: Implement token verification
@@ -84,3 +95,4 @@ function getToken(authHeader: string): string {
 
   return token;
 }
+
