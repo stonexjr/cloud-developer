@@ -3,21 +3,24 @@ import 'source-map-support/register'
 import { APIGatewayProxyEvent, APIGatewayProxyHandler, APIGatewayProxyResult } from 'aws-lambda'
 import { UpdateTodoRequest } from '../../requests/UpdateTodoRequest'
 import * as AWS from 'aws-sdk'
+import {getUserId} from "../utils";
+import {createLogger} from "../../utils/logger";
+const logger = createLogger('createTodo.ts');
 
 const docClient = new AWS.DynamoDB.DocumentClient();
 const TODOTable = process.env.TODOS_TABLE;
-const todoIdIndex = process.env.TODO_INDEX;
+// const todoIdIndex = process.env.TODO_INDEX;
 
 export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
   const todoId = event.pathParameters.todoId;
   const updatedTodo: UpdateTodoRequest = JSON.parse(event.body);
-  console.log("======= 1 =========");
   // TODO: Update a TODO item with the provided id using values in the "updatedTodo" object
+  //extract userId from JWT authorization token string
+  let userId = getUserId(event); //event.headers.Authorization;
+
   // check if the todoId exist
-  let userId = "1"; //TODO: hard code user Id until resolve Auth0
   /* method II to check if pair(userId, todoId) exist
   const validUserId = await todoIdExists(userId, todoId);
-  console.log("======= 2 =========");
 
   if(!validUserId){
     return {
@@ -56,7 +59,6 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
   }
   let item = result.Items[0];
 
-  console.log("======= 3 =========");
   const timestamp = new Date();
   const newItem = {
     todoId: todoId,
@@ -64,9 +66,8 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
     updatedAt: timestamp.toISOString(),
     createdAt: item['createdAt'],
     attachmentUrl: item['attachmentUrl'], //TODO: update attachment URL
-    userId: userId //TODO: hardcode userId at this moment
+    userId: userId
   };
-  console.log("======= 4 =========");
 
   //https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/GettingStarted.NodeJs.03.html
   await docClient.update({//TODO: why it's not work?
@@ -88,7 +89,7 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
     ReturnValues: "UPDATED_NEW"
   }).promise();
 
-  console.log("======= 5 =========");
+  logger.info(`User ${userId} successfully updated todo item ${todoId}`);
 
   return {
     statusCode: 201,

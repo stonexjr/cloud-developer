@@ -2,6 +2,10 @@ import 'source-map-support/register'
 
 import { APIGatewayProxyEvent, APIGatewayProxyResult, APIGatewayProxyHandler } from 'aws-lambda'
 import * as AWS from 'aws-sdk'
+import {parseUserId} from "../../auth/utils";
+import {getUserId} from "../utils";
+import {createLogger} from "../../utils/logger";
+const logger = createLogger('createTodo.ts');
 
 const docClient = new AWS.DynamoDB.DocumentClient();
 const TODOTable = process.env.TODOS_TABLE;
@@ -10,7 +14,8 @@ const todoIdIndex = process.env.TODO_ID_INDEX;
 export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
   const todoId = event.pathParameters.todoId;
   // TODO: Remove a TODO item by id
-  let userId = "1"; //TODO: hard code user Id until resolve Auth0
+  //extract userId from JWT authorization token string
+  let userId = getUserId(event); //event.headers.Authorization;
   let exist = await todoIdExists(userId, todoId);
   if(!exist){
     return {
@@ -25,6 +30,9 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
       'todoId': todoId
     }
   }).promise();
+
+  logger.info(`User ${userId} successfully deleted todo item ${todoId}`);
+  logger.info(`User ${userId} is creating new todo.`);
   return {
     statusCode: 200,
     headers: {
