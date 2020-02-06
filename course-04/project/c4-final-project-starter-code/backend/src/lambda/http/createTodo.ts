@@ -4,6 +4,8 @@ import { APIGatewayProxyEvent, APIGatewayProxyHandler, APIGatewayProxyResult } f
 import { CreateTodoRequest } from '../../requests/CreateTodoRequest'
 import * as AWS from 'aws-sdk'
 import uuid from 'uuid';
+import * as middy from 'middy'
+import {cors} from 'middy/middlewares'
 import {getUploadUrl} from "./generateUploadUrl";
 import {getUserId} from "../utils";
 import {createLogger} from "../../utils/logger";
@@ -16,7 +18,7 @@ const s3 = new AWS.S3({
 });
 const bucketName    = process.env.IMAGES_S3_BUCKET;
 
-export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
+export const handler = middy(async (event: APIGatewayProxyEvent, context): Promise<APIGatewayProxyResult> => {
   const newTodo: CreateTodoRequest = JSON.parse(event.body);
   const todoId = uuid.v4();
   //extract userId from JWT authorization token string
@@ -42,13 +44,18 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
 
   return {
     statusCode: 201,
-    headers:{
-        'Access-Control-Allow-Origin': '*'
-    },
+    // headers:{//replaced by middy cors
+    //     'Access-Control-Allow-Origin': '*',
+    //     'Access-Control-Allow-Credentials': true
+    // },
     body: JSON.stringify({
       item: newItem,
       uploadUrl: url
     })
   };
-};
+});
+
+handler.use(cors({
+  credentials: true
+}));
 

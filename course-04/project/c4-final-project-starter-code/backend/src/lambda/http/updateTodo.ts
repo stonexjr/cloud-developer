@@ -11,6 +11,8 @@ const docClient = new AWS.DynamoDB.DocumentClient();
 const TODOTable = process.env.TODOS_TABLE;
 // const todoIdIndex = process.env.TODO_INDEX;
 
+//middy is not used here in purpose to show the plain way of handling CORS
+//See how middy delegate CORS handling in createTodo.ts and getTodos.ts
 export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
   const todoId = event.pathParameters.todoId;
   const updatedTodo: UpdateTodoRequest = JSON.parse(event.body);
@@ -26,7 +28,8 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
     return {
       statusCode: 404,
       headers: {
-        'Access-Control-Allow-Origin': '*'
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Credentials': true
       },
       body: JSON.stringify({
         error: `pair(userId: ${userId}, todoId: ${todoId}) does not exist`
@@ -39,7 +42,8 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
     return {
       statusCode: 404,
       headers: {
-        'Access-Control-Allow-Origin': '*'
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Credentials': true
       },
       body: JSON.stringify({
         error: `Cannot find todo item ${todoId} for User(${userId}) to update. Have you created it initially?`
@@ -50,7 +54,8 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
     return {
       statusCode: 404,
       headers: {
-        'Access-Control-Allow-Origin': '*'
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Credentials': true
       },
       body: JSON.stringify({
         error: `Found ${result.Count} items(${todoId}) for User(${userId}) to update. Are you sure your todoId is unique Key in your DynamoDB schema?`
@@ -94,7 +99,8 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
   return {
     statusCode: 201,
     headers: {
-      'Access-Control-Allow-Origin': '*'
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Credentials': true
     },
     body: ""
   }

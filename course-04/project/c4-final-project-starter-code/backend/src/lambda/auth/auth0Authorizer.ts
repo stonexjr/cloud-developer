@@ -33,9 +33,7 @@ ${res.data['keys'][0].x5c[0]}
   };
 }
 
-export const handler = async (
-  event: CustomAuthorizerEvent
-): Promise<CustomAuthorizerResult> => {
+export const handler = async (event: CustomAuthorizerEvent): Promise<CustomAuthorizerResult> => {
   let {cert, algo} = await getCert();
   try {
     const jwtToken = verifyToken(event.authorizationToken, cert, algo);

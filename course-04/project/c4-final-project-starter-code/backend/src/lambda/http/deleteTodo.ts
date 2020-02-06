@@ -9,8 +9,10 @@ const logger = createLogger('createTodo.ts');
 
 const docClient = new AWS.DynamoDB.DocumentClient();
 const TODOTable = process.env.TODOS_TABLE;
-const todoIdIndex = process.env.TODO_ID_INDEX;
+// const todoIdIndex = process.env.TODO_ID_INDEX;
 
+//middy is not used here in purpose to show the plain way of handling CORS
+//See how middy delegate CORS handling in createTodo.ts and getTodos.ts
 export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
   const todoId = event.pathParameters.todoId;
   // TODO: Remove a TODO item by id
@@ -36,7 +38,8 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
   return {
     statusCode: 200,
     headers: {
-      'Access-Control-Allow-Origin': '*'
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Credentials': true
     },
     body: ""
   }
