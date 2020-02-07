@@ -2,12 +2,18 @@ import 'source-map-support/register'
 
 import { APIGatewayProxyEvent, APIGatewayProxyResult, APIGatewayProxyHandler } from 'aws-lambda'
 import * as AWS from 'aws-sdk'
-import {parseUserId} from "../../auth/utils";
+
+//use version 2.3.3. The API of latest version has changed and is causing
+//"new XAWS.DynamoDB.DocumentClient();" to fail
+import * as AWSXRay from 'aws-xray-sdk'
+
+// import {parseUserId} from "../../auth/utils";
 import {getUserId} from "../utils";
 import {createLogger} from "../../utils/logger";
 const logger = createLogger('createTodo.ts');
 
-const docClient = new AWS.DynamoDB.DocumentClient();
+const XAWS = AWSXRay.captureAWS(AWS);
+const docClient = new XAWS.DynamoDB.DocumentClient();
 const TODOTable = process.env.TODOS_TABLE;
 // const todoIdIndex = process.env.TODO_ID_INDEX;
 

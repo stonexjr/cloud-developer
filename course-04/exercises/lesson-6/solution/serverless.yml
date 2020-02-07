@@ -141,6 +141,14 @@ functions:
       type: Linear10PercentEvery1Minute
       alias: Live
 
+  GetTodos:
+    handler: src/lambda/http/getTodos.handler
+    events:
+      - http:
+          method: get
+          path: todos
+          cors: true
+
   GetImages:
     handler: src/lambda/http/getImages.handler
     events:

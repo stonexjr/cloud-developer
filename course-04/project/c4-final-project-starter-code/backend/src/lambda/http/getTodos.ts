@@ -1,18 +1,24 @@
 import 'source-map-support/register'
 import { APIGatewayProxyEvent, APIGatewayProxyResult, APIGatewayProxyHandler } from 'aws-lambda'
 import * as AWS from 'aws-sdk'
-import {parseUserId} from "../../auth/utils";
+
+//use version 2.3.3. The API of latest version has changed and is causing
+//"new XAWS.DynamoDB.DocumentClient();" to fail
+import * as AWSXRay from 'aws-xray-sdk'
+
 import * as middy from 'middy'
 import {cors} from 'middy/middlewares'
 import {getUserId} from "../utils";
 import {createLogger} from "../../utils/logger";
 const logger = createLogger('createTodo.ts');
 
-const docClient = new AWS.DynamoDB.DocumentClient();
+const XAWS = AWSXRay.captureAWS(AWS);
+let docClient = new XAWS.DynamoDB.DocumentClient();
 const TODOTable = process.env.TODOS_TABLE;
 
+
 export const handler = middy(async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
-  // TODO: Get all TODO items for a current user
+    // TODO: Get all TODO items for a current user
     //extract userId from JWT authorization token string
     let userId = getUserId(event); //event.headers.Authorization;
     // const result = await docClient.scan({
@@ -33,41 +39,40 @@ export const handler = middy(async (event: APIGatewayProxyEvent): Promise<APIGat
     }
 });
 
+//Use AWS.DynamoDB.DocumentClient()
 async function getTODOPerUser(userId: string){
-    const result = await docClient.query({
+    let params = {
         TableName: TODOTable,
         KeyConditionExpression: 'userId = :userId',
         ExpressionAttributeValues:{
             ':userId': userId
         },
         ScanIndexForward: false
-    }).promise();
-    return result.Items
+    };
+    const result = await docClient.query(params).promise();
+    return result.Items;
 }
+
+/*
+//Use AWS.DynamoDB(), but the output JSON format contains type string such as S, N which are
+//not compatible with frontend parser
+// var ddb = new AWS.DynamoDB({apiVersion: '2012-08-10'});
+async function getTODOPerUser2(userId: string){
+    let params = {
+        TableName: TODOTable,
+        KeyConditionExpression: 'userId = :userId',
+        ExpressionAttributeValues:{
+            ':userId': {S: userId}  // ':userId': userId is not allowed
+        },
+        ScanIndexForward: false
+    };
+    const result = await ddb.query(params).promise();
+    return result.Items;
+}
+ */
+
 
 handler.use(cors({
     credentials: true
 }));
-/*
-'use strict';
-const AWS = require('aws-sdk');
-const docClient = new AWS.DynamoDB.DocumentClient();
-const todoTable = process.env.TODOS_TABLE;
 
-exports.handler = async (event) => {
-    // TODO: Get all TODO items for a current user
-    const result = await docClient.scan({
-        TableName: todoTable
-    }).promise();
-    const items = result.Items;
-    return {
-        statusCode: 200,
-        headers: {
-            'Access-Control-Allow-Origin': '*'
-        },
-        body: JSON.stringify({
-            items
-        })
-    }
-};
-*/

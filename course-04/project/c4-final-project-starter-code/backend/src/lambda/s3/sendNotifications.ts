@@ -1,6 +1,10 @@
 import {SNSHandler, SNSEvent, S3Event, SNSEventRecord} from 'aws-lambda'
 import 'source-map-support/register'
 import * as AWS  from 'aws-sdk'
+//use version 2.3.3. The API of latest version has changed and is causing
+//"new XAWS.DynamoDB.DocumentClient();" to fail
+import * as AWSXRay from 'aws-xray-sdk'
+
 import {createLogger} from "../../utils/logger";
 const logger = createLogger('createTodo.ts');
 
@@ -15,10 +19,11 @@ const connectionParams = {
     endpoint: `${apiId}.execute-api.us-west-2.amazonaws.com/${stage}`
 };
 
-const apiGateway = new AWS.ApiGatewayManagementApi(connectionParams);
+const XAWS = AWSXRay.captureAWS(AWS);
+const apiGateway = new XAWS.ApiGatewayManagementApi(connectionParams);
 
 export const handler: SNSHandler = async (event: SNSEvent) => {
-    logger.info('Processing S3 SNS event') //, JSON.stringify(event));
+    logger.info('Processing S3 SNS event'); //, JSON.stringify(event));
     //TODO: finish S3 event handler
     for (const snsRecord of event.Records) {
         // const s3EventStr = snsRecord.Sns.Message;

@@ -2,8 +2,12 @@ import 'source-map-support/register'
 
 import { APIGatewayProxyEvent, APIGatewayProxyResult, APIGatewayProxyHandler } from 'aws-lambda'
 import * as AWS  from 'aws-sdk'
+//use version 2.3.3. The API of latest version has changed and is causing
+//"new XAWS.DynamoDB.DocumentClient();" to fail
+import * as AWSXRay from 'aws-xray-sdk'
 
-const s3 = new AWS.S3({
+const XAWS = AWSXRay.captureAWS(AWS);
+const s3 = new XAWS.S3({
   signatureVersion: 'v4'
 });
 const bucketName    = process.env.IMAGES_S3_BUCKET;
@@ -21,7 +25,7 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
       'Access-Control-Allow-Credentials': true
     },
     body: JSON.stringify({
-      url: url
+      uploadUrl: url
     })
   };
 };

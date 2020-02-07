@@ -316,3 +316,27 @@ Connect
 wscat -c wss://<apiid>.execute-api.us-west-2.amazonaws.com/dev
 ```
 
+local debug serverless
+```bash
+sls invoke local --function function-name-serverless.yaml
+--event '{"headers":{"Authorization": "123"}' 
+--context '{"key": "value"}'
+--stage dev # stage name
+--region us-west-2 # AWS region name
+--type RequestResponse # Invocation type
+```
+```bash
+sls invoke local --function GetTodos 
+--path <path/to/json-event>
+--contextPath <path/to/json-context>
+```
+```bash
+npm install serverless-dynamodb-local
+npm install serverless-offline
+# Run DynamoDB locally
+sls dynamodb install
+sls dynamodb start
+
+# Run a web server locally
+sls offline
+```
