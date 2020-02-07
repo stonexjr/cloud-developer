@@ -1,0 +1,5 @@
+#!/bin/bash
+#sls invoke local --function GetTodos --data '{"key": "value}'
+#sls invoke local --function GetTodos --data '{"headers":{"Authorization": "123"}'
+#sls invoke local --function GetTodos --data '{"headers":{"Authorization": "123"}' --context '{"key": "value"}'
+sls invoke local --function GetTodos --data '{"headers":{"Authorization": "Bear eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6Ik16SkNORVEzTmtJMU5qRkNSamxEUlRnd01UTTNOekEwTmprMk1qWTRPVEV6TWpJMk9UWTFOUSJ9.eyJpc3MiOiJodHRwczovL2Rldi1tOGluZXZmZi5hdXRoMC5jb20vIiwic3ViIjoiZ29vZ2xlLW9hdXRoMnwxMDQyNzk2MDc4OTM2OTAyNDIyNTgiLCJhdWQiOiJhRmRKNG81VU1QQ2xhVUFjaUFUSzBTUVlXdEQ5NVRlQyIsImlhdCI6MTU4MTAzMzUyNCwiZXhwIjoxNTgxMDY5NTI0LCJhdF9oYXNoIjoiME5UTTZGclczeGlreWNqR050TS1DUSIsIm5vbmNlIjoiQ0FfWVZHcnphdFNHb01ISXpPNEM2Y2hNNkFGa1pQVmwifQ.EeEEs4jCNyZO86hd9bpWFkw5V20-XUmE-70ICMgsik3Aqf7SKyNT0CFtS3ecO4wH4Q7-LXevy3oBr9HzeMM0Wne7eoQLylmR-HpYmpIBqRzBacZUtFSVwT4Oz_Q8YSnM98ithu0dWYnS5g0PLiWXTeFpfOtuM02PK_3C71RrcUvQ-yNXV_XMPOvxFKJTPvn1bcT5eOZ5J_1bH7JFakBWV_eoOS9my_tOuRmVicfcS_l64vaLb2Al4Rb1PiWfNN2zGqbOUNDkPqwyOORKCVhwtgBKx0mcW_gPM9SmsCBkudGZU-3M_jKCi_P1NKLiACVX9tT0gmIPtVJBd1xDHHMOHg" }}'
