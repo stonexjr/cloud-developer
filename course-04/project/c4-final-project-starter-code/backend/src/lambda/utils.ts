@@ -7,9 +7,13 @@ import { parseUserId } from "../auth/utils";
  *
  * @returns a user id from a JWT token
  */
-export function getUserId(event: APIGatewayProxyEvent): string {
+export function getUserIdFromEvent(event: APIGatewayProxyEvent): string {
   const authorization = event.headers.Authorization;
-  const split = authorization.split(' ');
+  return getUserIdFromAuth(authorization);
+}
+
+export function getUserIdFromAuth(auth: string): string {
+  const split = auth.split(' ');
   const jwtToken = split[1];
 
   return parseUserId(jwtToken);
