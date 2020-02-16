@@ -36,4 +36,4 @@ node_modules
 venv/
 .vscode
 .serverless
-.bk
+*.bk
