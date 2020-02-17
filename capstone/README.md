@@ -165,20 +165,28 @@ logger.info('User was authorized', {
 })
 ```
 # Screen shot of major components of the project
+## client transaction list
+![](https://github.com/stonexjr/cloud-developer/blob/capstone/capstone/images/client-transaction-list.png?raw=true)
+
+## transaction editing page
+![](https://github.com/stonexjr/cloud-developer/blob/capstone/capstone/images/client-update-page.png?raw=true)
 
 ## Lambda function
-
-## AWS Xray service map
+![](https://github.com/stonexjr/cloud-developer/blob/capstone/capstone/images/aws-lambda-functions.png?raw=true)
 
 ## AWS DynamboDB
+![](https://github.com/stonexjr/cloud-developer/blob/capstone/capstone/images/aws-dynamodb-txns-dev.png?raw=true)
 
-## AWS CloudWath Log Groups
+## AWS CloudWatch Log Groups
+![](https://github.com/stonexjr/cloud-developer/blob/capstone/capstone/images/aws-cloudwatch-log-groups.png?raw=true)
 
-## Grading the submission
+## AWS Xray service map
+![](https://github.com/stonexjr/cloud-developer/blob/capstone/capstone/images/aws-xray-svc-map.png?raw=true)
+
+
+# Grading the submission
 
 ## frontend transaction list
-
-
 
 Once you have finished developing your application, please set `apiId` and Auth0 parameters in the `config.ts` file in the `client` folder. A reviewer would start the React development server to run the frontend that should be configured to interact with your serverless application.
 
