@@ -1,0 +1,22 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "txn",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "type": {
+      "type": "string"
+    },
+    "amount": {
+      "type": "number"
+    }
+  },
+  "required": [
+    "name",
+    "type",
+    "amount"
+  ],
+  "additionalProperties": false
+}

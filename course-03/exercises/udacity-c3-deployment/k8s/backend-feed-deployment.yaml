@@ -1,0 +1,86 @@
+# Before running kubectl apply -f <this.yaml> file, make sure you have create configmap env-config and secret env-secret
+# Suppose you have a text file with each line contains key=value pair of the environment variable you would like to define
+# for the launched container. It is imperative since the backend service needs predefined environment variable to access the hostname,
+# database name of the RDS, and the secrets for DB usename and password
+# $>kubectl create configmap -f path/to/a/file/with/<key=value> pairs
+# $>kubectl create secret generic --from-literal=POSTGRESS_USERNAME=yourposegress_username --from-literal=POSTGRESS_PASSWORD
+# $>kubectl apply -f this.yaml
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    service: backend-feed
+  name: backend-feed
+spec:
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        service: backend-feed
+    spec:
+      containers:
+      - image: stonexjr/udacity-restapi-feed
+        name: backend-feed
+        imagePullPolicy: Always  
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "250m"
+          limits:
+            memory: "1024Mi"
+            cpu: "500m"                  
+        env:
+        - name: URL
+          valueFrom:
+            configMapKeyRef:
+              name: env-config
+              key: URL
+        - name: AWS_BUCKET
+          valueFrom:
+            configMapKeyRef:
+              name: env-config
+              key: AWS_BUCKET
+        - name: AWS_PROFILE
+          valueFrom:
+            configMapKeyRef:
+              name: env-config
+              key: AWS_PROFILE
+        - name: AWS_REGION
+          valueFrom:
+            configMapKeyRef:
+              name: env-config
+              key: AWS_REGION
+        - name: JWT_SECRET
+          valueFrom:
+            configMapKeyRef:
+              name: env-config
+              key: JWT_SECRET
+        - name: POSTGRESS_DB
+          valueFrom:
+            configMapKeyRef:
+              name: env-config
+              key: POSTGRESS_DB
+        - name: POSTGRESS_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: env-config
+              key: POSTGRESS_HOST
+        - name: POSTGRESS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: env-secret
+              key: POSTGRESS_PASSWORD
+        - name: POSTGRESS_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: env-secret
+              key: POSTGRESS_USERNAME      
+        volumeMounts:
+        - name: aws-secret
+          mountPath: "/root/.aws/"
+          readOnly: true
+      restartPolicy: Always
+      volumes:
+      - name: aws-secret
+        secret:
+          secretName: aws-secret

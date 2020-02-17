@@ -45,6 +45,10 @@ export class Todos extends React.PureComponent<TodosProps, TodosState> {
   }
 
   onTodoCreate = async (event: React.ChangeEvent<HTMLButtonElement>) => {
+    if(!this.state.newTodoName || this.state.newTodoName.length < 1){
+      alert('Task name is empty!');
+      return;
+    }
     try {
       const dueDate = this.calculateDueDate()
       const newTodo = await createTodo(this.props.auth.getIdToken(), {
@@ -85,7 +89,7 @@ export class Todos extends React.PureComponent<TodosProps, TodosState> {
         })
       })
     } catch {
-      alert('Todo deletion failed')
+      alert('Todo update failed')
     }
   }
 
