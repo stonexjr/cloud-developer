@@ -164,7 +164,8 @@ logger.info('User was authorized', {
   key: 'value'
 })
 ```
-# Screen shot of major components of the project
+
+# Screenshot of major components of the project
 ## client transaction list
 ![](https://github.com/stonexjr/cloud-developer/blob/capstone/capstone/images/client-transaction-list.png?raw=true)
 
