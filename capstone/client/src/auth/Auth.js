@@ -15,7 +15,7 @@ export default class Auth {
   });
 
   constructor(history) {
-    this.history = history
+    this.history = history;
 
     this.login = this.login.bind(this);
     this.logout = this.logout.bind(this);
@@ -33,8 +33,8 @@ export default class Auth {
   handleAuthentication() {
     this.auth0.parseHash((err, authResult) => {
       if (authResult && authResult.accessToken && authResult.idToken) {
-        console.log('Access token: ', authResult.accessToken)
-        console.log('id token: ', authResult.idToken)
+        console.log('Access token: ', authResult.accessToken);
+        console.log('id token: ', authResult.idToken);
         this.setSession(authResult);
       } else if (err) {
         this.history.replace('/');

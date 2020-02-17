@@ -1,28 +1,28 @@
 import { apiEndpoint } from '../config'
-import { Todo } from '../types/Todo';
-import { CreateTodoRequest } from '../types/CreateTodoRequest';
+import { Txn } from '../types/Txn';
+import { CreateTxnRequest } from '../types/CreateTxnRequest';
 import Axios from 'axios'
-import { UpdateTodoRequest } from '../types/UpdateTodoRequest';
+import { UpdateTxnRequest } from '../types/UpdateTxnRequest';
 
-export async function getTodos(idToken: string): Promise<Todo[]> {
-  console.log('Fetching todos')
+export async function getTxns(idToken: string): Promise<Txn[]> {
+  console.log('Fetching txns');
 
-  const response = await Axios.get(`${apiEndpoint}/todos`, {
+  const response = await Axios.get(`${apiEndpoint}/txns`, {
     headers: {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${idToken}`
     },
-  })
-  console.log('Todos:', response.data)
+  });
+  console.log('Txns:', response.data);
   return response.data.items
 }
 
-export async function createTodo(
+export async function createTxn(
   idToken: string,
-  newTodo: CreateTodoRequest
-): Promise<Todo> {
-  console.log('Creating todos');
-  const response = await Axios.post(`${apiEndpoint}/todos`,  JSON.stringify(newTodo), {
+  newTxn: CreateTxnRequest
+): Promise<Txn> {
+  console.log('texns-api.ts: Creating txn');
+  const response = await Axios.post(`${apiEndpoint}/txns`,  JSON.stringify(newTxn), {
     headers: {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${idToken}`
@@ -31,12 +31,12 @@ export async function createTodo(
   return response.data.item;
 }
 
-export async function patchTodo(
+export async function patchTxn(
   idToken: string,
-  todoId: string,
-  updatedTodo: UpdateTodoRequest
+  txnId: string,
+  updatedTxn: UpdateTxnRequest
 ): Promise<void> {
-  await Axios.patch(`${apiEndpoint}/todos/${todoId}`, JSON.stringify(updatedTodo), {
+  await Axios.patch(`${apiEndpoint}/txns/${txnId}`, JSON.stringify(updatedTxn), {
     headers: {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${idToken}`
@@ -44,11 +44,11 @@ export async function patchTodo(
   })
 }
 
-export async function deleteTodo(
+export async function deleteTxn(
   idToken: string,
-  todoId: string
+  txnId: string
 ): Promise<void> {
-  await Axios.delete(`${apiEndpoint}/todos/${todoId}`, {
+  await Axios.delete(`${apiEndpoint}/txns/${txnId}`, {
     headers: {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${idToken}`
@@ -58,14 +58,14 @@ export async function deleteTodo(
 
 export async function getUploadUrl(
   idToken: string,
-  todoId: string
+  txnId: string
 ): Promise<string> {
-  const response = await Axios.post(`${apiEndpoint}/todos/${todoId}/attachment`, '', {
+  const response = await Axios.post(`${apiEndpoint}/txns/${txnId}/attachment`, '', {
     headers: {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${idToken}`
     }
-  })
+  });
   return response.data.uploadUrl
 }
 

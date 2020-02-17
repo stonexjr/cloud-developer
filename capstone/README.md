@@ -57,7 +57,7 @@ It returns data that looks like this:
 }
 ```
 
-* `CreateTxn` - should create a new transaction for a current user. A shape of data send by a client application to this function can be found in the `CreateTodoRequest.ts` file
+* `CreateTxn` - should create a new transaction for a current user. A shape of data send by a client application to this function can be found in the `CreateTxnRequest.ts` file
 
 It receives a new transaction item to be created in JSON format that looks like this:
 
@@ -181,7 +181,7 @@ A create a local secondary index you need to create a DynamoDB resource like thi
 
 ```yml
 
-TodosTable:
+TxnsTable:
   Type: AWS::DynamoDB::Table
   Properties:
     AttributeDefinitions:
@@ -332,7 +332,7 @@ sls invoke local --function function-name-serverless.yaml
 --type RequestResponse # Invocation type
 ```
 ```bash
-sls invoke local --function GetTodos 
+sls invoke local --function GetTxns 
 --path <path/to/json-event>
 --contextPath <path/to/json-context>
 ```

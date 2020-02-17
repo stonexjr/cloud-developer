@@ -1,4 +1,4 @@
-export interface CreateTodoRequest {
+export interface CreateTxnRequest {
   name: string
   type: string
   amount: number

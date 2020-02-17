@@ -1,7 +1,7 @@
 {
 	"info": {
-		"_postman_id": "d0700d24-79ec-487e-8403-b565bef7f8e0",
-		"name": "Udacity C4 Project",
+		"_postman_id": "40e2ce69-fadd-4196-85e2-d1a5ac69f691",
+		"name": "Udacity C5 Capstone Project",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
@@ -9,81 +9,38 @@
 			"name": "TODOs",
 			"item": [
 				{
-					"name": "Get all todos",
+					"name": "Get all txns",
 					"request": {
 						"method": "GET",
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer {{authToken}}",
-								"type": "text"
+								"type": "text",
+								"value": "Bearer {{authToken}}"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
-							"raw": "https://{{apiId}}.execute-api.us-east-1.amazonaws.com/dev/todos",
+							"raw": "https://{{apiId}}.execute-api.us-west-2.amazonaws.com/dev/txns",
 							"protocol": "https",
 							"host": [
 								"{{apiId}}",
 								"execute-api",
-								"us-east-1",
+								"us-west-2",
 								"amazonaws",
 								"com"
 							],
 							"path": [
 								"dev",
-								"todos"
+								"txns"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "Create todo",
+					"name": "Create txn",
 					"request": {
 						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"name": "Content-Type",
-								"value": "application/json",
-								"type": "text"
-							},
-							{
-								"key": "Authorization",
-								"value": "Bearer {{authToken}}",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n\t\"name\": \"Water flowers\",\n\t\"dueDate\": \"2019-06-11\"\n}"
-						},
-						"url": {
-							"raw": "https://{{apiId}}.execute-api.us-east-1.amazonaws.com/dev/todos",
-							"protocol": "https",
-							"host": [
-								"{{apiId}}",
-								"execute-api",
-								"us-east-1",
-								"amazonaws",
-								"com"
-							],
-							"path": [
-								"dev",
-								"todos"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Update todo",
-					"request": {
-						"method": "PUT",
 						"header": [
 							{
 								"key": "Content-Type",
@@ -99,29 +56,107 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"name\": \"Change the world\",\n\t\"dueDate\": \"2019-12-11\",\n\t\"done\": true\n}"
+							"raw": "{\n\t\"name\": \"Buy jacket in Forever 21\",\n\t\"type\": \"fashion\",\n\t\"amount\": 112\n}"
 						},
 						"url": {
-							"raw": "https://{{apiId}}.execute-api.us-east-1.amazonaws.com/dev/todos/35dd600f-43c2-4649-903c-615e1586a26f",
+							"raw": "https://{{apiId}}.execute-api.us-west-2.amazonaws.com/dev/txns",
 							"protocol": "https",
 							"host": [
 								"{{apiId}}",
 								"execute-api",
-								"us-east-1",
+								"us-west-2",
 								"amazonaws",
 								"com"
 							],
 							"path": [
 								"dev",
-								"todos",
-								"35dd600f-43c2-4649-903c-615e1586a26f"
+								"txns"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "Delete todo",
+					"name": "Create txn invalid request",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"Buy jacket in Forever 21\",\n\t\"type\": \"fashion\",\n\t\"amount\": \"one hundred and twelve dollar\"\n}"
+						},
+						"url": {
+							"raw": "https://{{apiId}}.execute-api.us-west-2.amazonaws.com/dev/txns",
+							"protocol": "https",
+							"host": [
+								"{{apiId}}",
+								"execute-api",
+								"us-west-2",
+								"amazonaws",
+								"com"
+							],
+							"path": [
+								"dev",
+								"txns"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update txn",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"shopping at Trader Joes\",\n\t\"type\": \"grocery\",\n\t\"amount\": 123\n}"
+						},
+						"url": {
+							"raw": "https://{{apiId}}.execute-api.us-west-2.amazonaws.com/dev/txns/c224e3bf-30b0-45b0-a921-abd967a9e7e0",
+							"protocol": "https",
+							"host": [
+								"{{apiId}}",
+								"execute-api",
+								"us-west-2",
+								"amazonaws",
+								"com"
+							],
+							"path": [
+								"dev",
+								"txns",
+								"c224e3bf-30b0-45b0-a921-abd967a9e7e0"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete txn",
 					"request": {
 						"method": "DELETE",
 						"header": [
@@ -142,19 +177,19 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "https://{{apiId}}.execute-api.us-east-1.amazonaws.com/dev/todos/fe671583-4512-45f6-9475-4265c04362fb",
+							"raw": "https://{{apiId}}.execute-api.us-west-2.amazonaws.com/dev/txns/11ce94de-bb22-4757-ac50-30bdb730bf0e",
 							"protocol": "https",
 							"host": [
 								"{{apiId}}",
 								"execute-api",
-								"us-east-1",
+								"us-west-2",
 								"amazonaws",
 								"com"
 							],
 							"path": [
 								"dev",
-								"todos",
-								"fe671583-4512-45f6-9475-4265c04362fb"
+								"txns",
+								"11ce94de-bb22-4757-ac50-30bdb730bf0e"
 							]
 						}
 					},
@@ -169,26 +204,37 @@
 								"key": "Authorization",
 								"value": "Bearer {{authToken}}",
 								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
 							}
 						],
 						"body": {
 							"mode": "raw",
-							"raw": ""
+							"raw": "{\n\t\"name\": \"Buy puppy from PetMart\",\n\t\"dueDate\": \"2020-02-15\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
 						},
 						"url": {
-							"raw": "https://{{apiId}}.execute-api.us-east-1.amazonaws.com/dev/todos/3836b777-9bc4-4429-9b79-ba4e4f5f91c0/attachment",
+							"raw": "https://{{apiId}}.execute-api.us-west-2.amazonaws.com/dev/txns/f282e1a3-5df5-4397-805f-b0d69c708022/attachment",
 							"protocol": "https",
 							"host": [
 								"{{apiId}}",
 								"execute-api",
-								"us-east-1",
+								"us-west-2",
 								"amazonaws",
 								"com"
 							],
 							"path": [
 								"dev",
-								"todos",
-								"3836b777-9bc4-4429-9b79-ba4e4f5f91c0",
+								"txns",
+								"f282e1a3-5df5-4397-805f-b0d69c708022",
 								"attachment"
 							]
 						}
@@ -217,7 +263,8 @@
 						]
 					}
 				}
-			]
+			],
+			"protocolProfileBehavior": {}
 		}
 	],
 	"event": [
@@ -244,16 +291,17 @@
 	],
 	"variable": [
 		{
-			"id": "bf208e6b-f66d-4008-9366-dd541ff65425",
+			"id": "ba8e416e-87d5-47ce-95aa-858ead44e234",
 			"key": "apiId",
-			"value": "",
+			"value": "bf27xrghud",
 			"type": "string"
 		},
 		{
-			"id": "9bc6399a-d2bb-4f2d-9ffa-8480370d383c",
+			"id": "8cd4ee90-5a1d-4c0b-9e67-59dc2919a1bd",
 			"key": "authToken",
-			"value": "",
+			"value": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6Ik16SkNORVEzTmtJMU5qRkNSamxEUlRnd01UTTNOekEwTmprMk1qWTRPVEV6TWpJMk9UWTFOUSJ9.eyJpc3MiOiJodHRwczovL2Rldi1tOGluZXZmZi5hdXRoMC5jb20vIiwic3ViIjoiZ29vZ2xlLW9hdXRoMnwxMDQyNzk2MDc4OTM2OTAyNDIyNTgiLCJhdWQiOiJhRmRKNG81VU1QQ2xhVUFjaUFUSzBTUVlXdEQ5NVRlQyIsImlhdCI6MTU4MTkwMzk3NSwiZXhwIjoxNTgxOTM5OTc1LCJhdF9oYXNoIjoiSHZnUm9UYnV2bmxuN0licjFzSmJfdyIsIm5vbmNlIjoicGJyT2hsckFyZi0tWGNLVVZacX5sU1BCS1RfQ3ZxYXgifQ.gLWqEeVhM8pbKwbchj0RtvqqSQepDCzs2w0GxSh6ssqpnsJ_4ruPpV3bQvHV5rrhjcwx9rj48qbZcOzZds_vcijc6e-JLSeCeRDHr75u6adGRiOAUu3KbfP8a2PV-yxi6lf36begaHf_o7VbxZ8QVi-MtIZT0VuwTipP1qvLw6_PSjJ4Pq8eY1oT7xcs7-aXjoj5JfutYE_84aQ0qV0Bm8auAWv-zeImeTBxTNTDwzahx3FAHAqIEfPY_ZO34H2vKOFCmuAfTYVowXTPKzPu5gIK7b7SbqSsKnkbGZ_VHy5aZpYicm9eCaAvzshD1lsJ9ck3GocIbiyXurGsmiG0YA",
 			"type": "string"
 		}
-	]
+	],
+	"protocolProfileBehavior": {}
 }

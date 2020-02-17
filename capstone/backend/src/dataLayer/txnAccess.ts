@@ -72,7 +72,7 @@ export class TxnAccess {
                 userId: newTxn.userId,
                 txnId: newTxn.txnId
             },
-            UpdateExpression: "set #n = :name, type = :type, amount = :amount, updatedAt = :updatedAt",
+            UpdateExpression: "set #n = :name, #t = :type, amount = :amount, updatedAt = :updatedAt",
             ExpressionAttributeValues:{
                 ":name": newTxn.name,
                 ":type": newTxn.type,
@@ -80,7 +80,8 @@ export class TxnAccess {
                 ':updatedAt': new Date().toISOString()
             },
             ExpressionAttributeNames:{
-                "#n": "name"  //attribute "name" is a reserved keyword in DynamoDB. See https://intellipaat.com/community/17771/update-attribute-timestamp-reserved-word
+                "#n": "name", //attribute "name" is a reserved keyword in DynamoDB. See https://intellipaat.com/community/17771/update-attribute-timestamp-reserved-word
+                "#t": "type"  //attribute "type" is a reserved keyword in DynamoDB.
             },
             ReturnValues: "UPDATED_NEW"
         }).promise();
