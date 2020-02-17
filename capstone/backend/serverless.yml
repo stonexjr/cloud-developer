@@ -43,7 +43,7 @@ provider:
         - dynamodb:Query
       Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TXNS_TABLE}/index/${self:provider.environment.TXN_INDEX}
 
-      #Allow Lambda function to generate signedURL to put object to S3
+      # Allow Lambda function to generate signedURL to put object to S3
     - Effect: Allow
       Action:
         - s3:PutObject
