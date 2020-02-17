@@ -367,3 +367,17 @@ sls dynamodb start
 # Run a web server locally
 sls offline
 ```
+
+# Caveat
+AWS has constrain on the length of IAM role name. For example
+The default per-function iam role name for Lambda funciton `SendUploadNotification` is `serverless-txn-app-dev-SendUploadNotifications-us-west-2-lambdaRole`.
+During serverless depolyment, it fails on creating the iam role for this lambada function according to the following error message from CloudFormation:
+```
+ validation error detected: Value 
+ 'serverless-txn-app-dev-SendUploadNotifications-us-west-2-lambdaRole' at 'roleName' failed to satisfy constraint: Member must have length less than or equal to 64 (Service: AmazonIdentityManagement; Status Code: 400; Error Code: ValidationError; Request ID: 5c040f68-a7d3-43f2-95b3-f3f15cc665dd)
+```
+To solve this issue, we need to customize the iam role name for `SendUploadNotification` by add the following line in the `serverless.yml` file
+```
+iamRoleStatementsName: SendUploadNotificationsIAMRole
+```
+so that the produced iam role name is `SendUploadNotificationsIAMRole` instead of default one `serverless-txn-app-dev-SendUploadNotification-us-west-2-lambdaRole`

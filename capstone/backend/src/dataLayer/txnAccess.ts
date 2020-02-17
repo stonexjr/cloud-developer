@@ -40,7 +40,7 @@ export class TxnAccess {
         const result = await this.docClient.query({
             TableName: this.txnsTable,
             // IndexName: txnIdIndex,
-            ProjectionExpression: "userId, txnId, #n, done, dueDate, attachmentUrl, createdAt",
+            ProjectionExpression: "userId, txnId, #n, attachmentUrl, createdAt",
             KeyConditionExpression: 'txnId = :txnId and userId = :userId',
             ExpressionAttributeValues: {
                 ':userId': userId,
